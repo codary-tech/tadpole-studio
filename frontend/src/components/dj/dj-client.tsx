@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDJ } from "@/hooks/use-dj";
-import { fetchAvailableModels } from "@/lib/api/client";
+import { fetchDJProviders } from "@/lib/api/dj-client";
 import { ConversationList } from "./conversation-list";
 import { ChatPanel } from "./chat-panel";
 import { DJSettingsDialog } from "./dj-settings-dialog";
@@ -18,15 +18,13 @@ export function DJClient() {
   const { loadConversations } = useDJ();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const { data: available } = useQuery({
-    queryKey: ["available-models"],
-    queryFn: fetchAvailableModels,
+  const { data: providers } = useQuery({
+    queryKey: ["dj-providers"],
+    queryFn: fetchDJProviders,
     refetchInterval: 30_000,
   });
 
-  const hasChatLlm = available?.models.some(
-    (m) => m.model_type === "chat_llm" && m.installed,
-  ) ?? false;
+  const hasChatLlm = providers?.providers.some((p) => p.available) ?? false;
 
   useEffect(() => {
     loadConversations();
@@ -56,10 +54,13 @@ export function DJClient() {
         <div className="mb-4 flex items-start gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-600 dark:text-yellow-400">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
-            No Chat LLM installed. The AI DJ requires a small language model to
-            work.{" "}
+            No Chat LLM available. Configure a provider in{" "}
+            <button onClick={() => setSettingsOpen(true)} className="font-medium underline hover:no-underline">
+              DJ Settings
+            </button>
+            , or{" "}
             <Link href="/models" className="font-medium underline hover:no-underline">
-              Download one from the Models tab
+              download a built-in model
             </Link>
             .
           </span>

@@ -19,6 +19,9 @@ function renderWithProviders(ui: React.ReactElement) {
 describe("ConnectionBanner", () => {
   it("shows nothing when loading", () => {
     const { container } = renderWithProviders(<ConnectionBanner />);
-    expect(container.innerHTML).toBe("");
+    const wrapper = container.firstElementChild as HTMLElement;
+    expect(wrapper.className).toContain("max-h-0");
+    expect(wrapper.className).toContain("opacity-0");
+    expect(wrapper.textContent).toBe("");
   });
 });
