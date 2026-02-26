@@ -16,6 +16,9 @@ import { MODE_TO_TASK_TYPE } from "@/lib/constants";
 import { registerAutoGenSubmit, unregisterAutoGenSubmit } from "./use-generation-ws";
 import type { GenerateRequest, BackendType } from "@/types/api";
 
+/** Modes where thinking is supported (matches official ACE-Step Gradio). */
+const thinkingModes = new Set(["Simple", "Custom", "Complete"]);
+
 export function useGeneration() {
   const {
     activeMode,
@@ -54,14 +57,14 @@ export function useGeneration() {
       shift: adv.shift,
       infer_method: adv.inferMethod,
       seed: adv.seed,
-      thinking: adv.thinking,
+      thinking: thinkingModes.has(activeMode) && adv.thinking,
       lm_temperature: adv.lmTemperature,
       batch_size: isHeartMuLa ? 1 : adv.batchSize,
       audio_format: isHeartMuLa ? "mp3" : adv.audioFormat,
       auto_title: autoTitleEnabled && !customTitle,
-      use_cot_caption: adv.thinking && adv.useCotCaption,
-      use_cot_metas: adv.thinking && adv.useCotMetas,
-      use_cot_language: adv.thinking && adv.useCotLanguage,
+      use_cot_caption: thinkingModes.has(activeMode) && adv.thinking && adv.useCotCaption,
+      use_cot_metas: thinkingModes.has(activeMode) && adv.thinking && adv.useCotMetas,
+      use_cot_language: thinkingModes.has(activeMode) && adv.thinking && adv.useCotLanguage,
     };
 
     // Add HeartMuLa-specific params

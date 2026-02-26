@@ -124,6 +124,7 @@ export function AutoGenControls() {
   const customTitle = useGenerationStore((s) => s.customTitle);
   const setAutoTitleEnabled = useGenerationStore((s) => s.setAutoTitleEnabled);
   const setCustomTitle = useGenerationStore((s) => s.setCustomTitle);
+  const activeMode = useGenerationStore((s) => s.activeMode);
   const thinking = useGenerationStore((s) => s.advancedSettings.thinking);
   const useCotCaption = useGenerationStore((s) => s.advancedSettings.useCotCaption);
   const useCotMetas = useGenerationStore((s) => s.advancedSettings.useCotMetas);
@@ -134,8 +135,8 @@ export function AutoGenControls() {
   return (
     <Card>
       <CardContent className="space-y-3 p-4">
-        {/* Thinking (ACE-Step only) */}
-        {activeBackend !== "heartmula" && (
+        {/* Thinking (non-Simple modes, ACE-Step only) */}
+        {(activeMode === "Custom" || activeMode === "Complete") && activeBackend !== "heartmula" && (
           <>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
